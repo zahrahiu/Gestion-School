@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Module</title>
+</head>
+<body>
+<h1>Modifier un Module</h1>
+<form action="/modules/modifier" method="post">
+    <input type="hidden" name="id" th:value="${module.id}">
+    <input type="hidden" name="filiere.id" th:value="${filiere.id}">
+
+    <label for="nom">Nom</label>
+    <input type="text" name="nom" id="nom" th:value="${module.nom}" required>
+
+    <label for="description">Description</label>
+    <input type="text" name="description" id="description" th:value="${module.description}">
+
+    <button type="submit">Sauvegarder les modifications</button>
+</form>
+
+<a th:href="@{/modules/{filiereId}(filiereId=${filiere.id})}">Retour à la liste des modules</a>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher Emploi du Temps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">Emploi du Temps</h1>
+    <table class="table table-bordered" id="emploiTable">
+        <thead>
+        <tr>
+            <th>Heure</th>
+            <th>Lundi</th>
+            <th>Mardi</th>
+            <th>Mercredi</th>
+            <th>Jeudi</th>
+            <th>Vendredi</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Les lignes seront générées dynamiquement par JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Charger l'emploi du temps
+    async function loadEmploiDuTemps() {
+        const response = await fetch('/emploi-du-temps');
+        const emploi = await response.json();
+
+        const tbody = document.querySelector("#emploiTable tbody");
+        tbody.innerHTML = "";
+
+        const heures = ["9:00-10:45", "11:00-12:45", "13:00-15:45", "16:00-17:45"];
+        const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+
+        heures.forEach(heure => {
+            const row = document.createElement("tr");
+            const heureCell = document.createElement("td");
+            heureCell.textContent = heure;
+            row.appendChild(heureCell);
+
+            jours.forEach(jour => {
+                const cell = document.createElement("td");
+                const creneau = emploi.creneaux.find(c => c.jour === jour && c.heureDebut === heure.split('-')[0]);
+                cell.textContent = creneau ? `${creneau.module} (${creneau.professeur})` : "";
+                row.appendChild(cell);
+            });
+
+            tbody.appendChild(row);
+        });
+    }
+
+    // Charger l'emploi du temps au démarrage
+    document.addEventListener("DOMContentLoaded", () => {
+        loadEmploiDuTemps();
+    });
+</script>
+</body>
+</html>

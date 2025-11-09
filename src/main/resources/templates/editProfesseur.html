@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier Professeur</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Styles for the preferences modal */
+    .preferences-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    .preferences-modal select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .top-nav {
+      background: #203339;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .top-nav .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-nav .user-info i {
+      font-size: 20px;
+    }
+    .top-nav .logout {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 20px;
+      gap: 5px;
+    }
+    .top-nav .logout:hover {
+      text-decoration: underline;
+    }
+    .sidebar {
+      width: 250px;
+      background: #bdc9e0;
+      color: black;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+    }
+    .sidebar .menu {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+    .sidebar .menu li {
+      padding: 10px;
+      font-size: 16px;
+    }
+    .sidebar .menu a {
+      text-decoration: none;
+      color: black;
+      display: block;
+    }
+    .sidebar .menu a:hover {
+      background: rgb(85, 148, 174);
+      border-radius: 5px;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+      flex-grow: 1;
+    }
+    img {
+      height: 100px;
+      width: 190px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Barre de navigation en haut -->
+<div class="top-nav">
+  <div class="user-info">
+    <i class="bi bi-person-circle"></i>
+    <span>Bonjour Admin</span>
+  </div>
+  <a href="/logout" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?')" class="logout">
+    <i class="bi bi-box-arrow-right"></i> Déconnexion
+  </a>
+</div>
+
+<!-- Barre latérale gauche -->
+<div class="sidebar">
+  <img src="/imgs/logo.png" alt="Logo">
+  <ul class="menu">
+    <li>
+      <a href="#">📚 Gestion d'école ⬇</a>
+      <ul class="submenu">
+        <li><a href="/filieres/dashbort">🏠 Accueil</a></li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalFilieres">📖 Filières</a></li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalModules">📚 Modules</a></li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalEtudiants">👨‍🎓 Étudiants</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">⚙️ Administrateur ⬇</a>
+      <ul class="submenu">
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalUser">👤 Utilisateur</a></li>
+        <li><a href="#" id="preferences-link">⚙️ Préférences</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<!-- MODALES -->
+
+<!-- Modal Filières -->
+<div class="modal fade" id="modalFilieres" tabindex="-1" aria-labelledby="modalFilieresLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFilieresLabel">Gestion des Filières</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><a href="/filieres/ajouter">➕ Ajouter Filière</a></li>
+          <li class="list-group-item"><a href="/filieres">📋 Liste des Filières</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Modules -->
+<div class="modal fade" id="modalModules" tabindex="-1" aria-labelledby="modalModulesLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalModulesLabel">Gestion des Modules</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><a href="/modules/ajouter">➕ Ajouter Module</a></li>
+          <li class="list-group-item"><a href="/modules/liste">📋 Liste des Modules</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Etudiants -->
+<div class="modal fade" id="modalEtudiants" tabindex="-1" aria-labelledby="modalEtudiantsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEtudiantsLabel">Gestion des Étudiants</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><a href="/upload">➕ Ajouter Étudiant</a></li>
+          <li class="list-group-item"><a href="/students">📋 Liste des Étudiants</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Utilisateurs -->
+<div class="modal fade" id="modalUser" tabindex="-1" aria-labelledby="modalUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalUserLabel">Gestion des Utilisateurs</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li class="list-group-item"><a href="/professeurs/add">➕ Ajouter Utilisateur</a></li>
+          <li class="list-group-item"><a href="/professeurs/list">📋 Liste des Utilisateurs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preferences Modal -->
+<div class="preferences-modal" id="preferences-modal">
+  <h3>Modifier le Thème</h3>
+  <select id="theme-select">
+    <option value="default">Thème par défaut</option>
+    <option value="omega">Thème Omega</option>
+    <option value="aristo">Thème Aristo</option>
+    <option value="home">Thème Home</option>
+    <option value="hoy-sneaks">Thème Hoy-Sneaks</option>
+    <option value="afternoon">Thème Afternoon</option>
+    <option value="after-work">Thème After-Work</option>
+  </select>
+</div>
+<!-- Theme Styles -->
+<style>
+  /* Styles pour les thèmes */
+  /* Thème par défaut */
+  .default-theme body {
+    background-color: white;
+    color: #070707;
+  }
+  .default-theme .sidebar {
+    background: #bdc9e0;
+    color: black;
+  }
+  .default-theme .top-nav {
+    background: #203339;
+    color: white;
+  }
+
+  /* Thème Omega */
+  .omega-theme body {
+    background-color: #f0f0f5;
+    color: #5a3838;
+  }
+  .omega-theme .sidebar {
+    background: #d1d8e0;
+    color: #333;
+  }
+  .omega-theme .top-nav {
+    background: #3a4a4f;
+    color: #f0f0f5;
+  }
+
+  /* Thème Aristo */
+  .aristo-theme body {
+    background-color: #4d8298;
+    color: #2d4078;
+  }
+  .aristo-theme .sidebar {
+    background: #6a8ea0;
+    color: #2d4078;
+  }
+  .aristo-theme .top-nav {
+    background: #2d4078;
+    color: #ffffff;
+  }
+
+  /* Thème Home */
+  .home-theme body {
+    background-color: #ffffff;
+    color: #452020;
+  }
+  .home-theme .sidebar {
+    background: #e0dcdc;
+    color: #452020;
+  }
+  .home-theme .top-nav {
+    background: #452020;
+    color: #ffffff;
+  }
+
+  /* Thème Hoy-Sneaks */
+  .hoy-sneaks-theme body {
+    background-color: #3c3c3c;
+    color: #ffcc00;
+  }
+  .hoy-sneaks-theme .sidebar {
+    background: #4a4a4a;
+    color: #ffcc00;
+  }
+  .hoy-sneaks-theme .top-nav {
+    background: #2b2b2b;
+    color: #ffcc00;
+  }
+
+  /* Thème Afternoon */
+  .afternoon-theme body {
+    background-color: #f7f7f7;
+    color: #5c5c5c;
+  }
+  .afternoon-theme .sidebar {
+    background: #e0e0e0;
+    color: #5c5c5c;
+  }
+  .afternoon-theme .top-nav {
+    background: #5c5c5c;
+    color: #ffffff;
+  }
+
+  /* Thème After-Work */
+  .after-work-theme body {
+    background-color: #2b2b2b;
+    color: #dcdcdc;
+  }
+  .after-work-theme .sidebar {
+    background: #3c3c3c;
+    color: #dcdcdc;
+  }
+  .after-work-theme .top-nav {
+    background: #1c1c1c;
+    color: #dcdcdc;
+  }
+</style>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+  // Gestion des préférences
+  const preferencesLink = document.getElementById('preferences-link');
+  const preferencesModal = document.getElementById('preferences-modal');
+  const themeSelect = document.getElementById('theme-select');
+
+  preferencesLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    preferencesModal.style.display = 'block';
+  });
+
+  themeSelect.addEventListener('change', function() {
+    const selectedTheme = themeSelect.value;
+
+    // Enlever toutes les classes de thème existantes
+    document.body.classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+    );
+    document.querySelector('.sidebar').classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+    );
+    document.querySelector('.top-nav').classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+    );
+
+    // Appliquer le thème sélectionné
+    document.body.classList.add(selectedTheme + '-theme');
+    document.querySelector('.sidebar').classList.add(selectedTheme + '-theme');
+    document.querySelector('.top-nav').classList.add(selectedTheme + '-theme');
+  });
+
+  // Fermer la modal lorsque l'on clique à l'extérieur
+  window.addEventListener('click', function(event) {
+    if (event.target === preferencesModal) {
+      preferencesModal.style.display = 'none';
+    }
+  });
+</script>
+
+<!-- Contenu principal -->
+<div class="container mt-5" style="margin-left: 270px;">
+  <h2>Modifier un Utilisateur</h2>
+  <form th:action="@{/professeurs/update/{cin}(cin=${professeur.cin})}"
+        th:object="${professeur}"
+        method="post"
+        enctype="multipart/form-data">
+
+    <div class="form-group mb-3">
+      <label for="cin">CIN</label>
+      <input type="text" class="form-control" id="cin" th:field="*{cin}" readonly>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="nom">Nom</label>
+      <input type="text" class="form-control" id="nom" th:field="*{nom}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="prenom">Prénom</label>
+      <input type="text" class="form-control" id="prenom" th:field="*{prenom}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="adresse">Adresse</label>
+      <input type="text" class="form-control" id="adresse" th:field="*{adresse}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="telephone">Téléphone</label>
+      <input type="text" class="form-control" id="telephone" th:field="*{telephone}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" th:field="*{email}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="ville">Ville</label>
+      <input type="text" class="form-control" id="ville" th:field="*{ville}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="imageFile">Image</label>
+      <input type="file" class="form-control" id="imageFile" name="imageFile">
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="login">Login</label>
+      <input type="text" class="form-control" id="login" th:field="*{login}" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="password">Mot de passe</label>
+      <input type="password" class="form-control" id="password" th:field="*{password}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    <a th:href="@{/professeurs/list}" class="btn btn-secondary ms-2">Retour à la liste</a>
+  </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Global */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+        }
+        h1, h2 {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Navbar */
+        .top-nav {
+            background: #203339;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-nav .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .top-nav .logout {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-nav .logout:hover {
+            text-decoration: underline;
+        }
+        .sidebar {
+            width: 250px;
+            background: #bdc9e0;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+        }
+        .sidebar img {
+            height: 100px;
+            width: 190px;
+            margin-bottom: 15px;
+        }
+        .sidebar .menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .menu li {
+            margin: 5px 0;
+        }
+        .sidebar .menu a {
+            text-decoration: none;
+            color: black;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+        }
+        /* Styles for the preferences modal */
+        .preferences-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .preferences-modal select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .sidebar .menu a:hover {
+            background: rgb(85, 148, 174);
+        }
+
+        /* Content */
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        .content h1 {
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .modern-card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .modern-card h2 {
+            color: #34495e;
+        }
+
+        /* Modal */
+        .preferences-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            border-radius: 10px;
+        }
+        .preferences-modal select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        /* Theme Styles */
+        .default-theme {
+            background-color: white;
+            color: #070707;
+        }
+        .omega-theme {
+            background-color: #f0f0f5;
+            color: #5a3838;
+        }
+        .aristo-theme {
+            background-color: #4d8298;
+            color: #2d4078;
+        }
+        .home-theme {
+            background-color: #ffffff;
+            color: #452020;
+        }
+        .hoy-sneaks-theme {
+            background-color: #3c3c3c;
+            color: #ffcc00;
+        }
+        .afternoon-theme {
+            background-color: #f7f7f7;
+            color: #5c5c5c;
+        }
+        .after-work-theme {
+            background-color: #2b2b2b;
+            color: #dcdcdc;
+        }
+
+        /* Form Elements */
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Button Styling */
+        .btn-outline-primary {
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .btn-success {
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Barre de navigation -->
+<div class="top-nav">
+    <div class="user-info">
+        <i class="bi bi-person-circle"></i>
+        <span>Bonjour Admin</span>
+    </div>
+    <a href="/logout" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?')" class="logout">
+        <i class="bi bi-box-arrow-right"></i> Déconnexion
+    </a>
+</div>
+
+<!-- Barre latérale gauche -->
+<div class="sidebar">
+    <img src="/imgs/logo.png" alt="Logo">
+    <ul class="menu">
+        <li>
+            <a href="#">📚 Gestion d'école ⬇</a>
+            <ul class="submenu">
+                <li><a href="/filieres/dashbort">🏠 Accueil</a></li>
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalFilieres">📖 Filières</a></li>
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalModules">📚 Modules</a></li>
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalEtudiants">👨‍🎓 Étudiants</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">⚙️ Administrateur ⬇</a>
+            <ul class="submenu">
+                <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalUser">👤 Utilisateur</a></li>
+                <li><a href="#" id="preferences-link">⚙️ Préférences</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<!-- MODALES -->
+
+<!-- Modal Filières -->
+<div class="modal fade" id="modalFilieres" tabindex="-1" aria-labelledby="modalFilieresLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFilieresLabel">Gestion des Filières</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="/filieres/ajouter">➕ Ajouter Filière</a></li>
+                    <li class="list-group-item"><a href="/filieres">📋 Liste des Filières</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modules -->
+<div class="modal fade" id="modalModules" tabindex="-1" aria-labelledby="modalModulesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalModulesLabel">Gestion des Modules</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="/modules/ajouter">➕ Ajouter Module</a></li>
+                    <li class="list-group-item"><a href="/modules/liste">📋 Liste des Modules</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Etudiants -->
+<div class="modal fade" id="modalEtudiants" tabindex="-1" aria-labelledby="modalEtudiantsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEtudiantsLabel">Gestion des Étudiants</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="/upload">➕ Ajouter Étudiant</a></li>
+                    <li class="list-group-item"><a href="/students">📋 Liste des Étudiants</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Utilisateurs -->
+<div class="modal fade" id="modalUser" tabindex="-1" aria-labelledby="modalUserLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUserLabel">Gestion des Utilisateurs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="/professeurs/add">➕ Ajouter Utilisateur</a></li>
+                    <li class="list-group-item"><a href="/professeurs/list">📋 Liste des Utilisateurs</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preferences Modal -->
+<div class="preferences-modal" id="preferences-modal">
+    <h3>Modifier le Thème</h3>
+    <select id="theme-select">
+        <option value="default">Thème par défaut</option>
+        <option value="omega">Thème Omega</option>
+        <option value="aristo">Thème Aristo</option>
+        <option value="home">Thème Home</option>
+        <option value="hoy-sneaks">Thème Hoy-Sneaks</option>
+        <option value="afternoon">Thème Afternoon</option>
+        <option value="after-work">Thème After-Work</option>
+    </select>
+</div>
+<!-- Theme Styles -->
+<style>
+    /* Styles pour les thèmes */
+    /* Thème par défaut */
+    .default-theme body {
+        background-color: white;
+        color: #070707;
+    }
+    .default-theme .sidebar {
+        background: #bdc9e0;
+        color: black;
+    }
+    .default-theme .top-nav {
+        background: #203339;
+        color: white;
+    }
+
+    /* Thème Omega */
+    .omega-theme body {
+        background-color: #f0f0f5;
+        color: #5a3838;
+    }
+    .omega-theme .sidebar {
+        background: #d1d8e0;
+        color: #333;
+    }
+    .omega-theme .top-nav {
+        background: #3a4a4f;
+        color: #f0f0f5;
+    }
+
+    /* Thème Aristo */
+    .aristo-theme body {
+        background-color: #4d8298;
+        color: #2d4078;
+    }
+    .aristo-theme .sidebar {
+        background: #6a8ea0;
+        color: #2d4078;
+    }
+    .aristo-theme .top-nav {
+        background: #2d4078;
+        color: #ffffff;
+    }
+
+    /* Thème Home */
+    .home-theme body {
+        background-color: #ffffff;
+        color: #452020;
+    }
+    .home-theme .sidebar {
+        background: #e0dcdc;
+        color: #452020;
+    }
+    .home-theme .top-nav {
+        background: #452020;
+        color: #ffffff;
+    }
+
+    /* Thème Hoy-Sneaks */
+    .hoy-sneaks-theme body {
+        background-color: #3c3c3c;
+        color: #ffcc00;
+    }
+    .hoy-sneaks-theme .sidebar {
+        background: #4a4a4a;
+        color: #ffcc00;
+    }
+    .hoy-sneaks-theme .top-nav {
+        background: #2b2b2b;
+        color: #ffcc00;
+    }
+
+    /* Thème Afternoon */
+    .afternoon-theme body {
+        background-color: #f7f7f7;
+        color: #5c5c5c;
+    }
+    .afternoon-theme .sidebar {
+        background: #e0e0e0;
+        color: #5c5c5c;
+    }
+    .afternoon-theme .top-nav {
+        background: #5c5c5c;
+        color: #ffffff;
+    }
+
+    /* Thème After-Work */
+    .after-work-theme body {
+        background-color: #2b2b2b;
+        color: #dcdcdc;
+    }
+    .after-work-theme .sidebar {
+        background: #3c3c3c;
+        color: #dcdcdc;
+    }
+    .after-work-theme .top-nav {
+        background: #1c1c1c;
+        color: #dcdcdc;
+    }
+</style>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+    // Gestion des préférences
+    const preferencesLink = document.getElementById('preferences-link');
+    const preferencesModal = document.getElementById('preferences-modal');
+    const themeSelect = document.getElementById('theme-select');
+
+    preferencesLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        preferencesModal.style.display = 'block';
+    });
+
+    themeSelect.addEventListener('change', function() {
+        const selectedTheme = themeSelect.value;
+
+        // Enlever toutes les classes de thème existantes
+        document.body.classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+        );
+        document.querySelector('.sidebar').classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+        );
+        document.querySelector('.top-nav').classList.remove(
+            'default-theme', 'omega-theme', 'aristo-theme',
+            'home-theme', 'hoy-sneaks-theme', 'afternoon-theme', 'after-work-theme'
+        );
+
+        // Appliquer le thème sélectionné
+        document.body.classList.add(selectedTheme + '-theme');
+        document.querySelector('.sidebar').classList.add(selectedTheme + '-theme');
+        document.querySelector('.top-nav').classList.add(selectedTheme + '-theme');
+    });
+
+    // Fermer la modal lorsque l'on clique à l'extérieur
+    window.addEventListener('click', function(event) {
+        if (event.target === preferencesModal) {
+            preferencesModal.style.display = 'none';
+        }
+    });
+</script>
+
+<!-- Contenu principal -->
+<div class="content">
+    <h1>Liste des Modules par Filière</h1>
+    <div th:each="entry : ${filieresAvecModules}">
+        <h2>Filière : <span th:text="${entry.key.nom}"></span></h2>
+        <ul>
+            <li th:each="module : ${entry.value}" th:text="${module.nom}"></li>
+        </ul>
+    </div>
+    <a href="/modules/ajouter" class="btn btn-outline-primary">Retour à l'ajout</a>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+</body>
+</html>
